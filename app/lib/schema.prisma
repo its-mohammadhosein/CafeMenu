@@ -7,10 +7,67 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  GUEST
+  STAFF
+  ADMIN
+}
+
+// New enum for serving times
+enum ServingTime {
+  BREAKFAST
+  LUNCH
+  DINNER
+  ANYTIME
+}
+
 model User {
   id             String    @id @default(uuid())
   email          String    @unique
-  password       String    // Store hashed passwords only!
+  password       String
+  role           Role      @default(GUEST)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  orders         Order[]
+}
+
+model Product {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  slug         String        @unique
+  description  String?
+  price        Float
+  isOffer      Boolean       @default(false)
+  offerPrice   Float?
+  categoryId   Int
+  category     Category      @relation(fields: [categoryId], references: [id])
+  isAvailable  Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  imageUrl     String?
+  stock        Int?          // Optional stock (remains optional)
+  tags         String[]
+  orders       Order[]
+  servingTimes ServingTime[] @default([]) // New serving times array
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  slug        String    @unique
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  description String?
+}
+
+model Order {
+  id         Int       @id @default(autoincrement())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  products   Product[]
+  totalPrice Float
+  status     String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }

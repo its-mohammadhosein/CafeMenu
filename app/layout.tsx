@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Borel, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import JotaiProvider from "./Component/jotaiProvider";
+
+const borel = Borel({
+  variable: "--font-borel",
+  subsets: ["latin"],
+  weight: "400", // Added weight property
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,9 +32,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      className={`${borel.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
+
       >
-        <JotaiProvider>{children}</JotaiProvider>
+        {children}
       </body>
     </html>
   );
